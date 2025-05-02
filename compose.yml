@@ -1,0 +1,107 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow"]
+      interval: 5s
+      retries: 5
+
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  airflow-webserver:
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
+    image: my-airflow-spark:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__WEBSERVER__RBAC: 'True'
+      AIRFLOW__WEBSERVER__SECRET_KEY: secretKeyCustom
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./spark-jobs:/opt/airflow/spark-jobs
+      - ./data:/opt/airflow/data  # Chuyển dữ liệu vào thư mục nội bộ WSL
+    ports:
+      - "8082:8080"
+    command: webserver
+
+  airflow-scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
+    image: my-airflow-spark:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__WEBSERVER__SECRET_KEY: secretKeyCustom
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./spark-jobs:/opt/airflow/spark-jobs
+      - ./data:/opt/airflow/data 
+    command: scheduler
+
+  airflow-init:
+    image: my-airflow-spark:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./spark-jobs:/opt/airflow/spark-jobs
+      - ./data:/opt/airflow/data
+    entrypoint: >
+      bash -c "
+        airflow db init &&
+        airflow users create --username admin --firstname Admin --lastname User --role Admin --email admin@example.com --password admin
+      "
+
+
+
+  spark-master:
+    image: bitnami/spark:latest
+    user: "0:0"
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+    ports:
+      - "7077:7077"
+      - "8081:8080"
+    volumes:
+      - ./data:/opt/airflow/data 
+      - ./spark-jobs:/opt/bitnami/spark/jobs
+      - ./data:/opt/bitnami/spark/source/data
+
+  spark-worker:
+    image: bitnami/spark:latest
+    user: "0:0"
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    volumes:
+      - ./data:/opt/airflow/data 
+      - ./spark-jobs:/opt/bitnami/spark/jobs
+      - ./data:/opt/bitnami/spark/source/data
+volumes:
+  pgdata:
