@@ -1,0 +1,21 @@
+FROM apache/airflow:2.8.1-python3.10
+
+USER root
+
+RUN apt-get update && \
+    apt-get install -y openjdk-17-jdk wget curl ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV PATH="${JAVA_HOME}/bin:$PATH"
+
+ENV SPARK_VERSION=3.5.0
+RUN wget https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3.tgz && \
+    tar -xvzf spark-${SPARK_VERSION}-bin-hadoop3.tgz && \
+    mv spark-${SPARK_VERSION}-bin-hadoop3 /opt/spark && \
+    ln -s /opt/spark/bin/spark-submit /usr/local/bin/spark-submit && \
+    rm spark-${SPARK_VERSION}-bin-hadoop3.tgz
+
+ENV SPARK_HOME=/opt/spark
+RUN mkdir -p /opt/bitnami/spark/source/data && chown -R 1001:0 /opt/bitnami/spark/source/data
+USER airflow

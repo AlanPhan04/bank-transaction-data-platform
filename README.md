@@ -1,30 +1,25 @@
-# Bank Transaction Data Platform
+# Data Platform with Airflow, Spark, and PostgreSQL
 
-## 📚 Project Overview
+## 🗂️ Mục tiêu
 
-This project builds a simple Data Platform that ingests, transforms, and analyzes anonymous bank transaction data.  
-It demonstrates an end-to-end ETL pipeline, data warehouse modeling, and business intelligence dashboard focused on fraud detection.
+Xây dựng một nền tảng dữ liệu (Data Platform) hiện đại để thu thập, xử lý và lưu trữ dữ liệu từ nhiều nguồn khác nhau. Hệ thống sử dụng:
 
-**Key Features:**
-- Automated ETL workflow using Apache Airflow
-- Raw and clean data storage (PostgreSQL + Parquet)
-- Data warehouse star schema modeling
-- BI Dashboard visualization (Apache Superset or Metabase)
-- Dockerized environment for easy setup
+- **Apache Airflow**: Điều phối các pipeline ETL.
+- **Apache Spark**: Xử lý dữ liệu lớn theo kiểu batch hoặc streaming.
+- **PostgreSQL**: Lưu trữ kết quả dữ liệu đã xử lý để phân tích và truy vấn.
 
 ---
 
-## 🏗️ Architecture
+## 🛠️ Kiến trúc hệ thống
 
 ```plaintext
-CSV Dataset
-    ↓
-Apache Airflow (ETL)
-    ↓
-PostgreSQL (Raw Data Layer)
-    ↓
-Transform & Clean
-    ↓
-PostgreSQL (DW Schema) / Parquet (Processed Data)
-    ↓
-BI Dashboard (Fraud Analysis)
+Nguồn dữ liệu (CSV/API/Streaming)
+           │
+           ▼
+     Apache Airflow (scheduler)
+           │
+           ▼
+     Apache Spark (ETL/ELT)
+           │
+           ▼
+     PostgreSQL (Data Warehouse)
