@@ -1,25 +1,27 @@
-# Data Platform with Airflow, Spark, and PostgreSQL
+# 🚀 Data Platform with Airflow, Spark, and PostgreSQL
 
-## 🗂️ Mục tiêu
+## 🗂️ Objective
 
-Xây dựng một nền tảng dữ liệu (Data Platform) hiện đại để thu thập, xử lý và lưu trữ dữ liệu từ nhiều nguồn khác nhau. Hệ thống sử dụng:
+Build a modern **Data Platform** to collect, process, and store data from various sources. This project simulates how data engineers in financial or economic domains manage data workflows.
 
-- **Apache Airflow**: Điều phối các pipeline ETL.
-- **Apache Spark**: Xử lý dữ liệu lớn theo kiểu batch hoặc streaming.
-- **PostgreSQL**: Lưu trữ kết quả dữ liệu đã xử lý để phân tích và truy vấn.
+The system integrates:
+
+- **Apache Airflow** – for ETL orchestration and scheduling.
+- **Apache Spark** – for scalable and distributed data processing.
+- **PostgreSQL** – for storing processed and cleaned data to support analytics and BI tools (e.g., Power BI).
 
 ---
 
-## 🛠️ Kiến trúc hệ thống
+## 🛠️ System Architecture
 
 ```plaintext
-Nguồn dữ liệu (CSV/API/Streaming)
+Data Sources (CSV/JSON/API/Streaming)
            │
            ▼
-     Apache Airflow (scheduler)
+     Apache Airflow (DAG Scheduler)
            │
            ▼
-     Apache Spark (ETL/ELT)
+     Apache Spark (ETL Processing)
            │
            ▼
      PostgreSQL (Data Warehouse)
