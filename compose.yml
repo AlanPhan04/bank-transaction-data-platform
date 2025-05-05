@@ -14,7 +14,8 @@ services:
 
     volumes:
       - pgdata:/var/lib/postgresql/data
-
+    networks:
+      - app-network
   airflow-webserver:
     build:
       context: .
@@ -36,6 +37,8 @@ services:
     ports:
       - "8082:8080"
     command: webserver
+    networks:
+      - app-network
 
   airflow-scheduler:
     build:
@@ -55,6 +58,8 @@ services:
       - ./spark-jobs:/opt/airflow/spark-jobs
       - ./data:/opt/airflow/data 
     command: scheduler
+    networks:
+      - app-network
 
   airflow-init:
     image: my-airflow-spark:latest
@@ -74,7 +79,8 @@ services:
         airflow db init &&
         airflow users create --username admin --firstname Admin --lastname User --role Admin --email admin@example.com --password admin
       "
-
+    networks:
+      - app-network
 
 
   spark-master:
@@ -90,6 +96,8 @@ services:
       - ./data:/opt/airflow/data 
       - ./spark-jobs:/opt/bitnami/spark/jobs
       - ./data:/opt/bitnami/spark/source/data
+    networks:
+      - app-network
 
   spark-worker:
     image: bitnami/spark:latest
@@ -103,5 +111,49 @@ services:
       - ./data:/opt/airflow/data 
       - ./spark-jobs:/opt/bitnami/spark/jobs
       - ./data:/opt/bitnami/spark/source/data
+    networks:
+      - app-network
+
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    hostname: metabase
+    volumes:
+      - /dev/urandom:/dev/random:ro
+    ports:
+      - 3000:3000
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: metabase
+      MB_DB_PORT: 5432
+      MB_DB_USER: admin 
+      MB_DB_PASS: admin
+      MB_DB_HOST: postgresBI
+    networks:
+      - app-network
+    healthcheck:
+      test: curl --fail -I http://localhost:3000/api/health || exit 1
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  postgresBI:
+    image: postgres:latest
+    container_name: postgresBI
+    hostname: postgresBI
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_DB: metabase
+      POSTGRES_PASSWORD: admin
+    networks:
+      - app-network
+
+
 volumes:
   pgdata:
+
+networks:
+  app-network:
+    driver: bridge
