@@ -1,5 +1,5 @@
 ('C:\\Users\\Alan Phan\\Desktop\\Bach Khoa '
- 'Studies\\Tools\\DataPlatform\\spark_project_base\\build\\main\\PYZ-00.pyz',
+ 'Studies\\Tools\\DataPlatform\\bank-transaction-data-platform\\build\\main\\PYZ-00.pyz',
  [('_compat_pickle',
    'D:\\miniconda3\\envs\\spark_base\\lib\\_compat_pickle.py',
    'PYMODULE'),
@@ -188,11 +188,11 @@
   ('plugins', '-', 'PYMODULE'),
   ('plugins.mongodb_plugin',
    'C:\\Users\\Alan Phan\\Desktop\\Bach Khoa '
-   'Studies\\Tools\\DataPlatform\\spark_project_base\\src\\ingest\\plugins\\mongodb_plugin.py',
+   'Studies\\Tools\\DataPlatform\\bank-transaction-data-platform\\src\\ingest\\plugins\\mongodb_plugin.py',
    'PYMODULE'),
   ('plugins.postgres_plugin',
    'C:\\Users\\Alan Phan\\Desktop\\Bach Khoa '
-   'Studies\\Tools\\DataPlatform\\spark_project_base\\src\\ingest\\plugins\\postgres_plugin.py',
+   'Studies\\Tools\\DataPlatform\\bank-transaction-data-platform\\src\\ingest\\plugins\\postgres_plugin.py',
    'PYMODULE'),
   ('pprint', 'D:\\miniconda3\\envs\\spark_base\\lib\\pprint.py', 'PYMODULE'),
   ('psycopg2',

@@ -1,5 +1,6 @@
 import argparse
-from plugins import postgres_plugin, mongodb_plugin
+from src.ingest.plugins.Postgre import postgres_plugin
+from src.ingest.plugins.MongoDB import mongodb_plugin
 
 def run(source, table):
     if source == "postgres":
